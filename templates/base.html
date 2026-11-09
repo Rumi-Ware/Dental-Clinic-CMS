@@ -1,0 +1,60 @@
+{% load static %}
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>
+{% block title %}Rumi Dental Care{% endblock %}
+</title>
+<link rel="stylesheet" href="{% static 'clinic.css' %}">
+</head>
+<body>
+<a class="skip-link" href="#main">Skip to main content</a>
+<header class="topbar">
+<a class="brand" href="{% url 'dashboard' %}">
+<span class="brand-logo" aria-hidden="true"><img src="{% static 'branding/rumi-dental-care-original.jpeg' %}" alt="" width="1280" height="905"></span>
+<div class="brand-names"><span class="brand-clinic">Rumi Dental Care</span><span class="brand-doctor">Dr Aisha Salman</span></div>
+</a>
+{% if user.is_authenticated %}
+<div class="session-controls">
+<div class="identity">{{ user.username }} <span class="badge">
+{% if user.is_superuser %}Owner{% else %}Doctor{% endif %}
+</span>
+</div>
+<form action="{% url 'logout' %}" method="post">
+{% csrf_token %}
+<button class="quiet" type="submit">Log out</button>
+</form>
+</div>
+{% endif %}
+</header>
+{% if user.is_authenticated and request.resolver_match.url_name != 'dashboard' %}
+{% with current=request.resolver_match.url_name %}
+<nav class="main-nav" aria-label="Main navigation">
+<a href="{% url 'dashboard' %}">Dashboard</a>
+<a href="{% url 'patients' %}" {% if '/patients/' in request.path and current != 'patient_create' and '/payments/' not in request.path and '/appointments/' not in request.path %}aria-current="page"{% endif %}>Find a patient</a>
+<a href="{% url 'patient_create' %}" {% if current == 'patient_create' %}aria-current="page"{% endif %}>Register patient</a>
+{% if user.is_superuser %}
+<a href="{% url 'accounts' %}" {% if current == 'accounts' or current == 'audit' %}aria-current="page"{% endif %}>Accounts</a>
+{% endif %}
+<a href="{% url 'finance_outstanding' %}" {% if current == 'finance_outstanding' or '/payments/' in request.path %}aria-current="page"{% endif %}>Outstanding payments</a>
+<a href="{% url 'finance_today' %}" {% if current == 'finance_today' %}aria-current="page"{% endif %}>Today's collections</a>
+{% if user.is_superuser %}<a href="{% url 'finance_reports' %}" {% if '/finance/' in request.path and current != 'finance_today' and current != 'finance_outstanding' %}aria-current="page"{% endif %}>Financial reports</a>{% endif %}
+<a href="{% url 'appointment_schedule' %}" {% if current == 'appointment_schedule' or '/appointments/' in request.path %}aria-current="page"{% endif %}>Schedule</a><a href="{% url 'personal_tasks' %}" {% if '/tasks/' in request.path %}aria-current="page"{% endif %}>My tasks</a>
+{% if user.is_superuser %}<a href="{% url 'clinic_print_settings' %}" {% if current == 'clinic_print_settings' %}aria-current="page"{% endif %}>Clinic print details</a><a href="{% url 'backup_centre' %}" {% if '/backups/' in request.path %}aria-current="page"{% endif %}>Backup &amp; Restore</a>{% endif %}
+</nav>
+{% endwith %}
+{% endif %}
+<main id="main" class="{% block workspace_class %}{% endblock %}">
+{% if messages %}
+{% for message in messages %}
+<div class="notice" role="status">{{ message }}</div>
+{% endfor %}
+{% endif %}
+{% block content %}
+{% endblock %}
+</main>
+<footer>Rumi Dental Care · v6.0 local trial · Fictional patient data only</footer>
+</body>
+</html>
