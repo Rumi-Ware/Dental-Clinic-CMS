@@ -17,21 +17,21 @@ This deployment mode exists only to preview the Django interface online with fic
 Set these for Preview and Production as needed:
 
 - `DJANGO_SECRET_KEY`: a newly generated random Django secret key (keep private).
-- `DATABASE_URL`: the Neon pooled PostgreSQL connection string.
+- `DATABASE_URL`: the Neon pooled PostgreSQL connection string (used by the deployed app).
 - `ALLOWED_HOSTS`: optional comma-separated custom hostnames. The `.vercel.app` domain is allowed by default.
 
 Do not commit these values or place them in source code.
 
 ## First-time Neon setup
 
-After connecting Vercel to Neon and setting the environment variables, run migrations against the Neon database from a trusted local terminal:
+After connecting Vercel to Neon and setting the environment variables, run migrations against the Neon database from a trusted local terminal. Use Neon's **direct** connection string for this one-time migration command; keep the **pooled** connection string in Vercel for application requests:
 
 PowerShell:
 
 ```powershell
 $env:VERCEL = "1"
 $env:DJANGO_SECRET_KEY = "paste-your-generated-secret-here"
-$env:DATABASE_URL = "paste-your-Neon-pooled-connection-string-here"
+$env:DATABASE_URL = "paste-your-Neon-direct-connection-string-here"
 python manage.py migrate
 python manage.py createsuperuser
 ```
