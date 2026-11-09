@@ -1,3 +1,4 @@
+from django.conf import settings
 from django.urls import path
 from django.contrib.auth.views import LogoutView
 from clinic import finance_views as finance
@@ -87,3 +88,5 @@ urlpatterns = [
     path('audit/', views.audit, name='audit'),
 ]
 # Local development only; runserver --insecure serves local CSS with DEBUG=False.
+if settings.RUMI_DEMO_MODE:
+    urlpatterns = [pattern for pattern in urlpatterns if not (pattern.name or '').startswith('backup_')]
