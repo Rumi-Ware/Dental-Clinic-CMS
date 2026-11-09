@@ -42,7 +42,7 @@
 <a href="{% url 'finance_today' %}" {% if current == 'finance_today' %}aria-current="page"{% endif %}>Today's collections</a>
 {% if user.is_superuser %}<a href="{% url 'finance_reports' %}" {% if '/finance/' in request.path and current != 'finance_today' and current != 'finance_outstanding' %}aria-current="page"{% endif %}>Financial reports</a>{% endif %}
 <a href="{% url 'appointment_schedule' %}" {% if current == 'appointment_schedule' or '/appointments/' in request.path %}aria-current="page"{% endif %}>Schedule</a><a href="{% url 'personal_tasks' %}" {% if '/tasks/' in request.path %}aria-current="page"{% endif %}>My tasks</a>
-{% if user.is_superuser %}<a href="{% url 'clinic_print_settings' %}" {% if current == 'clinic_print_settings' %}aria-current="page"{% endif %}>Clinic print details</a><a href="{% url 'backup_centre' %}" {% if '/backups/' in request.path %}aria-current="page"{% endif %}>Backup &amp; Restore</a>{% endif %}
+{% if user.is_superuser %}<a href="{% url 'clinic_print_settings' %}" {% if current == 'clinic_print_settings' %}aria-current="page"{% endif %}>Clinic print details</a>{% if not RUMI_DEMO_MODE %}<a href="{% url 'backup_centre' %}" {% if '/backups/' in request.path %}aria-current="page"{% endif %}>Backup &amp; Restore</a>{% endif %}{% endif %}
 </nav>
 {% endwith %}
 {% endif %}
@@ -55,6 +55,6 @@
 {% block content %}
 {% endblock %}
 </main>
-<footer>Rumi Dental Care · v6.0 local trial · Fictional patient data only</footer>
+<footer>Rumi Dental Care · {% if RUMI_DEMO_MODE %}temporary online interface demo{% else %}v6.0 local trial{% endif %} · Fictional patient data only</footer>
 </body>
 </html>

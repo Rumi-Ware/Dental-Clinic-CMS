@@ -273,6 +273,9 @@ def catalogue(request, procedure_id=None):
 @clinic_required('add_attachment')
 @require_http_methods(['GET', 'POST'])
 def upload(request, pk):
+    from django.conf import settings
+    if not settings.RUMI_ATTACHMENTS_ENABLED:
+        return HttpResponse('Attachment uploads are disabled in this temporary online demo because Vercel local files are not permanent. Use fictional data only.', status=503, content_type='text/plain')
     patient = get_object_or_404(Patient, pk=pk)
     form = AttachmentForm(request.POST or None, request.FILES or None, patient=patient, instance=Attachment(patient=patient, uploader=request.user))
     if request.method == 'POST' and form.is_valid():
